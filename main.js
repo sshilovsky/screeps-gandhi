@@ -129,7 +129,8 @@ for(var creep_index in my_creeps) {
             creep.moveTo(outpost);
         }
     } else if (role == "healer") {
-        var target = creep.memory.target;
+        var target_name = creep.memory.target;
+        var target = Game.creeps[target_name];
         
         if(target && !needsHeal(target)) {
             target = undefined;
@@ -154,6 +155,6 @@ for(var creep_index in my_creeps) {
             creep.moveTo(outpost);
         }
         
-        creep.memory.target = target;
+        creep.memory.target = target ? target.name : undefined;
     }
 }
