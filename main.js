@@ -66,9 +66,8 @@ function spawn(base) {
         
         spawnAtLeast(base, role_numbers, "harvester", 1) ||
         spawnAtLeast(base, role_numbers, "hauler", 1) ||
-        spawnAtLeast(base, role_numbers, "guard", 2) ||
-        spawnAtLeast(base, role_numbers, "healer", 1) ||
-        spawnAtLeast(base, role_numbers, "guard", 5) || true;
+        spawnAtLeast(base, role_numbers, "healer", (role_numbers.guard || 0) / 3) ||
+        createCreep(base, "guard");
     }
 }
 
