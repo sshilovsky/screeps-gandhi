@@ -1,4 +1,4 @@
-var harvester = require('harvester');
+var worker = require('worker');
 
 var base = Game.spawns.Spawn1;
 var source = base.room.find(Game.SOURCES)[0];
@@ -18,8 +18,8 @@ for(var creep_index in my_creeps) {
     var creep = my_creeps[creep_index];
     var role = creep.memory.role;
 
-    if(role == "harvester") {
-        harvester(creep, source, base);
+    if(role == "worker") {
+        worker(creep, source, base);
     } else if (role == "builder") {
         if(creep.energy === 0) {
             creep.moveTo(base);

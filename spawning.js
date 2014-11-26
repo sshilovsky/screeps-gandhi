@@ -1,5 +1,5 @@
 var ROLES = {
-    "harvester": [Game.WORK, Game.CARRY, Game.MOVE],
+    "worker": [Game.WORK, Game.CARRY, Game.MOVE],
     "guard": [Game.TOUGH, Game.TOUGH, Game.ATTACK, Game.ATTACK, Game.MOVE],
     "healer": [Game.HEAL, Game.MOVE],
 };
@@ -61,7 +61,7 @@ module.exports = function(base) {
             console.log("creep with no role");
         }
         
-        spawnAtLeast(base, role_numbers, "harvester", 4) ||
+        spawnAtLeast(base, role_numbers, "worker", 4) ||
         spawnAtLeast(base, role_numbers, "guard", 2) ||
         spawnAtLeast(base, role_numbers, "healer", 1) ||
         spawnAtLeast(base, role_numbers, "guard", 5) || true;
