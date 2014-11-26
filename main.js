@@ -1,7 +1,8 @@
 /* SPAWNING functions */
 
 var ROLES = {
-    "worker": [Game.WORK, Game.CARRY, Game.MOVE],
+    "harvester": [Game.WORK, Game.WORK, Game.WORK, Game.MOVE],
+    "hauler" : [Game.CARRY, Game.CARRY, Game.MOVE,Game.MOVE,Game.MOVE],
     "guard": [Game.TOUGH, Game.TOUGH, Game.ATTACK, Game.ATTACK, Game.MOVE],
     "healer": [Game.HEAL, Game.MOVE],
 };
@@ -63,7 +64,8 @@ function spawn(base) {
             console.log("creep with no role");
         }
         
-        spawnAtLeast(base, role_numbers, "worker", 4) ||
+        spawnAtLeast(base, role_numbers, "harvester", 1) ||
+        spawnAtLeast(base, role_numbers, "hauler", 1) ||
         spawnAtLeast(base, role_numbers, "guard", 2) ||
         spawnAtLeast(base, role_numbers, "healer", 1) ||
         spawnAtLeast(base, role_numbers, "guard", 5) || true;
@@ -71,16 +73,22 @@ function spawn(base) {
 }
 
 /* WORKER functions */
-function worker(creep, source, base) {
-    if(creep.energy < creep.energyCapacity) {
+function harvester(creep, source) {
         creep.moveTo(source);
         creep.harvest(source);
-    } else {
-        creep.moveTo(base);
-        creep.transferEnergy(base);
-    }
-};
-
+}
+function hauler(creep, base) {
+    if (creep.energy < creep.energyCapacity)
+    {
+        target = creep.pos.findNearest(Game.DROPPED_ENERGY);
+        if(!target) return;
+        creep.moveTo(target);
+        creep.pickup(target);
+        return;
+    } 
+    creep.moveTo(base);
+    creep.transferEnergy(base); 
+}
 /* MAIN */
 
 var base = Game.spawns.Spawn1;
@@ -101,8 +109,8 @@ for(var creep_index in my_creeps) {
     var creep = my_creeps[creep_index];
     var role = creep.memory.role;
 
-    if(role == "worker") {
-        worker(creep, source, base);
+    if(role == "harvester") {
+        harvester(creep, source);
     } else if (role == "builder") {
         if(creep.energy === 0) {
             creep.moveTo(base);
@@ -111,6 +119,8 @@ for(var creep_index in my_creeps) {
             creep.moveTo(construction_sites[0]);
             creep.build(construction_sites[0]);
         }
+    } else if (role == "hauler") {
+            hauler(creep, base);
     } else if (role == "guard") {
         if (enemies.length) {
             creep.moveTo(enemies[0]);
