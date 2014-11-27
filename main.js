@@ -3,7 +3,7 @@ var _ = require('lodash');
 
 var ROLES = {
     "harvester": [Game.WORK, Game.WORK, Game.WORK, Game.MOVE],
-    "hauler" : [Game.CARRY, Game.CARRY, Game.MOVE,Game.MOVE,Game.MOVE],
+    "hauler" : [Game.CARRY, Game.MOVE, Game.CARRY, Game.MOVE],
     "guard": [Game.TOUGH, Game.TOUGH, Game.ATTACK, Game.ATTACK, Game.MOVE],
     "healer": [Game.HEAL, Game.MOVE],
 };
