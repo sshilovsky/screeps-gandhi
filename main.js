@@ -111,7 +111,7 @@ function hauler(creep, base) {
 /* MAIN */
 
 var base = Game.spawns.Spawn1;
-var source = base.pos.findNearest(Game.SOURCES);
+var source = base.pos.findNearest(Game.SOURCES, {"filter": "energy"});
 var construction_sites = base.room.find(Game.CONSTRUCTION_SITES);
 var enemies = base.room.find(Game.HOSTILE_CREEPS);
 var outpost = Game.flags.Flag1;
