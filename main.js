@@ -77,6 +77,56 @@ function harvester(creep, source) {
         creep.moveTo(source);
         creep.harvest(source);
 }
+
+function healer(creep) {
+    var target_name = creep.memory.target;
+    var target = Game.creeps[target_name];
+    
+    if(target && !needsHeal(target)) {
+        target = undefined;
+    }
+    
+    if(!target) {
+        // TODO search for a target
+        for(var i in my_creeps) {
+            var patient = my_creeps[i];
+            if(needsHeal(patient)) {
+                target = patient;
+                console.log(creep.name, "heals", target.name);
+                break;
+            }
+        }
+    }
+    
+    if(target) {
+        creep.moveTo(target);
+        creep.heal(target);
+    } else {
+        creep.moveTo(outpost);
+    }
+    
+    creep.memory.target = target ? target.name : undefined;
+}
+
+function guard(creep) {
+    if (enemies.length) {
+        creep.moveTo(enemies[0]);
+        creep.attack(enemies[0]);
+    } else {
+        creep.moveTo(outpost);
+    }
+}
+
+function builder(creep, base) {
+    if(creep.energy === 0) {
+        creep.moveTo(base);
+        base.transferEnergy(creep);
+    } else if(construction_sites.length) {
+        creep.moveTo(construction_sites[0]);
+        creep.build(construction_sites[0]);
+    }
+}
+
 function hauler(creep, base) {
     if (creep.energy < creep.energyCapacity)
     {
@@ -131,49 +181,12 @@ for(var creep_index in my_creeps) {
     if(role == "harvester") {
         harvester(creep, source);
     } else if (role == "builder") {
-        if(creep.energy === 0) {
-            creep.moveTo(base);
-            base.transferEnergy(creep);
-        } else if(construction_sites.length) {
-            creep.moveTo(construction_sites[0]);
-            creep.build(construction_sites[0]);
-        }
+        builder(creep, base);
     } else if (role == "hauler") {
             hauler(creep, base);
     } else if (role == "guard") {
-        if (enemies.length) {
-            creep.moveTo(enemies[0]);
-            creep.attack(enemies[0]);
-        } else {
-            creep.moveTo(outpost);
-        }
+        guard(creep);
     } else if (role == "healer") {
-        var target_name = creep.memory.target;
-        var target = Game.creeps[target_name];
-        
-        if(target && !needsHeal(target)) {
-            target = undefined;
-        }
-        
-        if(!target) {
-            // TODO search for a target
-            for(var i in my_creeps) {
-                var patient = my_creeps[i];
-                if(needsHeal(patient)) {
-                    target = patient;
-                    console.log(creep.name, "heals", target.name);
-                    break;
-                }
-            }
-        }
-        
-        if(target) {
-            creep.moveTo(target);
-            creep.heal(target);
-        } else {
-            creep.moveTo(outpost);
-        }
-        
-        creep.memory.target = target ? target.name : undefined;
+        healer(creep);
     }
 }
