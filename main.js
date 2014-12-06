@@ -73,9 +73,67 @@ function spawn(base) {
 }
 
 /* WORKER functions */
-function harvester(creep, source) {
-        creep.moveTo(source);
+function xy2pos(room, xy) {
+    var zxy = xy.split('_');
+    return room.getPositionAt(zxy[1], zxy[2]);
+}
+
+function pos2xy(pos) {
+    return "_" + pos.x + "_" + pos.y;
+}
+
+function object2xy(object) {
+    return pos2xy(object.pos);
+}
+
+function objects2xyd(array) {
+    var result = {};
+    for (var index in array) {
+        var xy = object2xy(array[index]);
+        result[xy] = true;
+    }
+    return result;
+}
+
+function get_free_sources_xy(room) {
+    var sources_xy = Memory.free_sources;
+    if (sources_xy === undefined) {
+        var sources = room.find(Game.SOURCES);
+        Memory.free_sources = sources_xy = objects2xyd(sources);
+    }
+    return sources_xy;
+}
+
+function find_nearest_xy(from_pos, xys) {
+    var nearest_dist;
+    var nearest_xy;
+    for(var xy in xys) {
+        var pos = xy2pos(Game.getRoom(from_pos.roomName), xy);
+        var dist = from_pos.findPathTo(pos).length;
+        if (dist !== undefined && (nearest_dist === undefined || nearest_dist > dist)) {
+            nearest_dist = dist;
+            nearest_xy = xy;
+        }
+    }
+    return nearest_xy;
+}
+
+function harvester(creep) {
+    var source_xy = creep.memory.source;
+    if (source_xy === undefined) {
+        var sources_xy = get_free_sources_xy(creep.room);
+        creep.memory.source = source_xy = find_nearest_xy(creep.pos, sources_xy);
+        delete Memory.free_sources[source_xy];
+    }
+    var source_pos = xy2pos(creep.room, source_xy);
+    creep.moveTo(source_pos);
+
+    if(source_pos.isNearTo(creep.pos)) {
+        var source = source_pos.findNearest(Game.SOURCES);
         creep.harvest(source);
+        // TODO mark position as constant energy supply for haulers
+    }
+    // TODO unalloc source if harvester is dead
 }
 
 function healer(creep) {
@@ -161,7 +219,6 @@ function hauler(creep, base) {
 /* MAIN */
 
 var base = Game.spawns.Spawn1;
-var source = base.pos.findNearest(Game.SOURCES);
 var construction_sites = base.room.find(Game.CONSTRUCTION_SITES);
 var enemies = base.room.find(Game.HOSTILE_CREEPS);
 var outpost = Game.flags.Flag1;
@@ -179,7 +236,7 @@ for(var creep_index in my_creeps) {
     var role = creep.memory.role;
 
     if(role == "harvester") {
-        harvester(creep, source);
+        harvester(creep);
     } else if (role == "builder") {
         builder(creep, base);
     } else if (role == "hauler") {
