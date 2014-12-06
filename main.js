@@ -1,3 +1,7 @@
+if(Game.time === 0) {
+    Memory = {};
+}
+
 /* SPAWNING functions */
 var _ = require('lodash');
 
@@ -8,8 +12,8 @@ var ROLES = {
     "healer": [Game.HEAL, Game.MOVE, Game.HEAL, Game.MOVE],
 };
 
-if(Game.time === 0) {
-    Memory = {};
+if(Memory.roles === undefined)
+{
     var roles = Memory.roles = {};
     for (var role in ROLES) {
         roles[role] = { "number": 0 };
