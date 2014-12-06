@@ -139,33 +139,13 @@ function harvester(creep) {
 }
 
 function healer(creep) {
-    var target_name = creep.memory.target;
-    var target = Game.creeps[target_name];
-    
-    if(target && !needsHeal(target)) {
-        target = undefined;
-    }
-    
-    if(!target) {
-        // TODO search for a target
-        for(var i in my_creeps) {
-            var patient = my_creeps[i];
-            if(needsHeal(patient)) {
-                target = patient;
-                console.log(creep.name, "heals", target.name);
-                break;
-            }
-        }
-    }
-    
+    var target = creep.pos.findNearest(Game.MY_CREEPS, {"filter": needsHeal});
     if(target) {
         creep.moveTo(target);
         creep.heal(target);
     } else {
         creep.moveTo(outpost);
     }
-    
-    creep.memory.target = target ? target.name : undefined;
 }
 
 function guard(creep) {
