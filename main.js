@@ -65,8 +65,12 @@ function spawn(base) {
             console.log("creep with no role");
         }
         
-        spawnAtLeast(base, role_numbers, "harvester", 1) ||
+        spawnAtLeast(base, role_numbers, "harvester", 2) ||
         spawnAtLeast(base, role_numbers, "hauler", 1) ||
+        spawnAtLeast(base, role_numbers, "guard", 1) ||
+        spawnAtLeast(base, role_numbers, "hauler", 2) ||
+        spawnAtLeast(base, role_numbers, "guard", 2) ||
+        spawnAtLeast(base, role_numbers, "hauler", 3) ||
         spawnAtLeast(base, role_numbers, "healer", (role_numbers.guard || 0) / 3) ||
         createCreep(base, "guard");
     }
