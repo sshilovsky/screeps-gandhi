@@ -4,8 +4,8 @@ var _ = require('lodash');
 var ROLES = {
     "harvester": [Game.MOVE, Game.WORK, Game.WORK, Game.WORK, Game.WORK],
     "hauler" : [Game.CARRY, Game.MOVE, Game.CARRY, Game.MOVE],
-    "guard": [Game.TOUGH, Game.TOUGH, Game.ATTACK, Game.ATTACK, Game.MOVE],
-    "healer": [Game.HEAL, Game.MOVE],
+    "guard": [Game.ATTACK, Game.ATTACK, Game.ATTACK, Game.ATTACK, Game.MOVE],
+    "healer": [Game.HEAL, Game.MOVE, Game.HEAL, Game.MOVE],
 };
 
 function createCreep(spawn, role) {
@@ -66,10 +66,8 @@ function spawn(base) {
         }
         
         spawnAtLeast(base, role_numbers, "harvester", 2) ||
-        spawnAtLeast(base, role_numbers, "hauler", 1) ||
-        spawnAtLeast(base, role_numbers, "guard", 1) ||
         spawnAtLeast(base, role_numbers, "hauler", 2) ||
-        spawnAtLeast(base, role_numbers, "guard", 2) ||
+        spawnAtLeast(base, role_numbers, "guard", 1) ||
         spawnAtLeast(base, role_numbers, "hauler", 3) ||
         spawnAtLeast(base, role_numbers, "healer", (role_numbers.guard || 0) / 3) ||
         createCreep(base, "guard");
