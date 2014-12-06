@@ -169,9 +169,10 @@ function healer(creep) {
 }
 
 function guard(creep) {
-    if (enemies.length) {
-        creep.moveTo(enemies[0]);
-        creep.attack(enemies[0]);
+    var enemy = creep.pos.findNearest(Game.HOSTILE_CREEPS, {"ignoreCreeps": true});
+    if(enemy) {
+        creep.moveTo(enemy);
+        creep.attack(enemy);
     } else {
         creep.moveTo(outpost);
     }
@@ -222,7 +223,6 @@ function hauler(creep, base) {
 
 var base = Game.spawns.Spawn1;
 var construction_sites = base.room.find(Game.CONSTRUCTION_SITES);
-var enemies = base.room.find(Game.HOSTILE_CREEPS);
 var outpost = Game.flags.Flag1;
 var my_creeps = base.room.find(Game.MY_CREEPS);
 var damaged_creeps = []; // TODO create healing queue
