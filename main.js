@@ -8,6 +8,14 @@ var ROLES = {
     "healer": [Game.HEAL, Game.MOVE, Game.HEAL, Game.MOVE],
 };
 
+if(Game.time === 0) {
+    Memory = {};
+    var roles = Memory.roles = {};
+    for (var role in ROLES) {
+        roles[role] = { "number": 0 };
+    }
+}
+
 function createCreep(spawn, role) {
     if(!ROLES[role]) {
         console.log("shouldn't have happened: createCreep() invalid role:", role);
@@ -35,11 +43,12 @@ function createCreep(spawn, role) {
             break;
         default:
             console.log("Spawning", res, "a", role);
+            Memory.roles[role].number += 1;
     }
 }
 
-function spawnAtLeast(spawn, role_numbers, role, num) {
-    if ((role_numbers[role] || 0) >= num)
+function spawnAtLeast(spawn, role, num) {
+    if (Memory.roles[role].number >= num)
         return false;
     
     createCreep(spawn, role);
@@ -48,28 +57,12 @@ function spawnAtLeast(spawn, role_numbers, role, num) {
 
 function spawn_creeps(base) {
     if (base.spawning === null) {
-        var my_creeps = base.room.find(Game.MY_CREEPS);
-        // TODO use Memory.creeps
-        var role_numbers = {};
-        // counting existing units
-        for(var creep_index in my_creeps) {
-            var creep = my_creeps[creep_index];
-    
-            var role = creep.memory.role;
-            if (role_numbers[role] === undefined)
-                role_numbers[role] = 1;
-            else
-                role_numbers[role] += 1;
-        }
-        if(role_numbers[""]) {
-            console.log("shouldn't have happened: creep with no role");
-        }
-        
-        spawnAtLeast(base, role_numbers, "harvester", 2) ||
-        spawnAtLeast(base, role_numbers, "hauler", 2) ||
-        spawnAtLeast(base, role_numbers, "guard", 1) ||
-        spawnAtLeast(base, role_numbers, "hauler", 3) ||
-        spawnAtLeast(base, role_numbers, "healer", (role_numbers.guard || 0) / 3) ||
+        spawnAtLeast(base, "harvester", 2) ||
+        spawnAtLeast(base, "hauler", 2) ||
+        spawnAtLeast(base, "guard", 1) ||
+        spawnAtLeast(base, "hauler", 3) ||
+        spawnAtLeast(base, "healer", Memory.roles.guard.number / 3) ||
+        spawnAtLeast(base, "hauler", 3) ||
         createCreep(base, "guard");
     }
 }
@@ -228,6 +221,7 @@ for(var creep_name in Memory.creeps) {
         if(role == "harvester") {
             harvester_dead(creep_name);
         }
+        Memory.roles[role].number -= 1;
         delete Memory.creeps[creep_name];
         continue;
     }
