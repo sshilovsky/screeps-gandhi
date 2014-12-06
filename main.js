@@ -46,10 +46,10 @@ function spawnAtLeast(spawn, role_numbers, role, num) {
     return true;
 }
 
-function spawn(base) {
+function spawn_creeps(base) {
     if (base.spawning === null) {
         var my_creeps = base.room.find(Game.MY_CREEPS);
-    
+        // TODO use Memory.creeps
         var role_numbers = {};
         // counting existing units
         for(var creep_index in my_creeps) {
@@ -62,7 +62,7 @@ function spawn(base) {
                 role_numbers[role] += 1;
         }
         if(role_numbers[""]) {
-            console.log("creep with no role");
+            console.log("shouldn't have happened: creep with no role");
         }
         
         spawnAtLeast(base, role_numbers, "harvester", 2) ||
@@ -118,6 +118,13 @@ function find_nearest_xy(from_pos, xys) {
         }
     }
     return nearest_xy;
+}
+
+function harvester_dead(creep_name) {
+    var mem = Memory.creeps[creep_name];
+    var source_xy = mem.source;
+    if(source_xy)
+        Memory.free_sources[source_xy] = true;
 }
 
 function harvester(creep) {
@@ -204,18 +211,30 @@ function hauler(creep, base) {
 var base = Game.spawns.Spawn1;
 var construction_sites = base.room.find(Game.CONSTRUCTION_SITES);
 var outpost = Game.flags.Flag1;
-var my_creeps = base.room.find(Game.MY_CREEPS);
 var damaged_creeps = []; // TODO create healing queue
-
-spawn(base);
 
 function needsHeal(cr) {
     return cr.hits > 0 && cr.hits < cr.hitsMax;
 }
 
-for(var creep_index in my_creeps) {
-    var creep = my_creeps[creep_index];
-    var role = creep.memory.role;
+for(var creep_name in Memory.creeps) {
+
+    var creep = Game.creeps[creep_name];
+    var mem = Memory.creeps[creep_name];
+    var role = mem.role;
+
+    if(!creep) {// dead creep
+        console.log(creep_name, "a", role, "is dead");
+        if(role == "harvester") {
+            harvester_dead(creep_name);
+        }
+        delete Memory.creeps[creep_name];
+        continue;
+    }
+
+    if(creep.spawning) {
+        continue;
+    }
 
     if(role == "harvester") {
         harvester(creep);
@@ -229,3 +248,5 @@ for(var creep_index in my_creeps) {
         healer(creep);
     }
 }
+
+spawn_creeps(base);
