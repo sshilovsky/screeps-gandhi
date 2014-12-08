@@ -13,7 +13,6 @@ var ROLES =
 
 if(Game.time === 0)
 {
-    Memory = {};
     var roles = Memory.roles = {};
     for (var role in ROLES)
     {
@@ -82,6 +81,7 @@ function spawn_creeps()
             spawnAtLeast(base, "healer", Memory.roles.guard.number / 3)     ||
             spawnAtLeast(base, "harvester", allSourcesCount)                ||
             spawnAtLeast(base, "hauler", Memory.roles.harvester.number * 2) ||
+            spawnAtLeast(base, "builder", 2)                                ||
             createCreep(base, "guard");
         }
     }
@@ -233,7 +233,7 @@ function builder(creep)
         {
             target = Game.MY_STRUCTURES[j];
             creep.moveTo(target);
-            if(creep.repair(target) == Game.ERR_NOT_ENOUGH_ENERGY && not (creep.memory.energyRequested))
+            if(creep.repair(target) == Game.ERR_NOT_ENOUGH_ENERGY && !creep.memory.energyRequested)
                 energyRequest(creep, creep.energyCapacity / 50);
                 
             return;
@@ -242,7 +242,7 @@ function builder(creep)
     if(construction_sites.length)
     {
         creep.moveTo(construction_sites[0]);
-        if(creep.build(construction_sites[0]) == Game.ERR_NOT_ENOUGH_ENERGY && not (creep.memory.energyRequested))
+        if(creep.build(construction_sites[0]) == Game.ERR_NOT_ENOUGH_ENERGY && !creep.memory.energyRequested)
                 energyRequest(creep, creep.energyCapacity / 50);
     }
     else
