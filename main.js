@@ -13,7 +13,6 @@ var ROLES =
 
 if(Game.time === 0)
 {
-    Memory = {};
     var roles = Memory.roles = {};
     for (var role in ROLES)
     {
