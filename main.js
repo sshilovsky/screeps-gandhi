@@ -73,7 +73,7 @@ function spawn_creeps()
     for(var i in Game.spawns)
     {
         base = Game.spawns[i];
-        if (base.spawning === null || base.spawning === undefined)
+        if (base.spawning === null)
         {
             spawnAtLeast(base, "harvester", 1)                              ||
             spawnAtLeast(base, "hauler", 2)                                 ||
@@ -249,7 +249,7 @@ function builder(creep)
     {
         if(creep.energy !== 0) //It's worth noting that the CARRY part has weight only when a creep bears energy, else it weighs nothing.  http://screeps.com/docs/concepts.php
              creep.dropEnergy();
-        base = creep.room.findNearest(Game.MY_SPAWN);
+        var base = creep.pos.findNearest(Game.MY_SPAWN);
         creep.moveTo(base);
     }
 }
