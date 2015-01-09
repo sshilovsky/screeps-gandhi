@@ -48,12 +48,13 @@ for (var creep_name in Memory.creeps)
 
 if (base.spawning === null)
 {
-    spawn_at_least(base, "harvester", 2) ||
-    spawn_at_least(base, "hauler", 2) ||
+    spawn_at_least(base, "harvester", 3) ||
+    spawn_at_least(base, "hauler", 3) ||
     spawn_at_least(base, "guard", 1) ||
-    spawn_at_least(base, "hauler", 3) ||
     spawn_at_least(base, "healer", Memory.roles.guard.number / 3) ||
-    spawn_at_least(base, "hauler", 3) ||
+    spawn_at_least(base, "hauler", 6) ||
+    spawn_at_least(base, "guard", 4) ||
+    spawn_at_least(base, "hauler", 10) ||
     create_creep(base, "guard");
 }
 
